@@ -1,34 +1,55 @@
 import fs from "fs";
 import path from "path";
 import glob from "glob";
-import transform from "./transform.js";
+import transform, { needTransform } from "./transform.js";
 
 const globAll = (src, callback) => glob(src + "/**/*", callback);
 
-const output = "./dist/";
-const input = "./";
+const outputDir = "./build/";
+const inputDir = "./";
 
-const is_dir = async (pathName) =>
-  (await fs.promises.lstat(pathName)).isDirectory();
+globAll(inputDir, async function (err, res) {
+  fs.rmdirSync(outputDir, { recursive: true });
+  const map = await Promise.all(
+    res.map(async (filePath) => {
+      if (!needTransform(filePath)) {
+        return;
+      }
 
-globAll(input, async function (err, res) {
-  fs.rmdirSync(output, { recursive: true });
-  res.forEach(async (filePath) => {
-    const parsed = path.parse(filePath);
-    if (await is_dir(filePath).catch()) return;
-    const [data, extname] = await transform(filePath);
-    const newName = [parsed.name, extname].join(".");
-    const newPath = path.join(output, parsed.dir, newName);
+      const [data, newExt] = await transform(filePath);
 
-    await fs.promises
-      .mkdir(path.join(output, parsed.dir), { recursive: true })
-      .catch(console.error);
+      const parsed = path.parse(filePath);
+      const newName = [parsed.name, newExt].join(".");
+      const newPath = path.join(outputDir, parsed.dir, newName);
 
-    if (data instanceof fs.ReadStream) {
-      console.log(filePath, newPath);
-      data.pipe(fs.createWriteStream(newPath));
-    } else {
-      fs.writeFileSync(newPath, data);
-    }
-  });
+      await fs.promises
+        .mkdir(path.join(outputDir, parsed.dir), { recursive: true })
+        .catch(console.error);
+
+      if (data instanceof fs.ReadStream) {
+        console.log(filePath, newPath);
+        data.pipe(fs.createWriteStream(newPath));
+      } else {
+        fs.writeFileSync(newPath, data);
+      }
+
+      return [filePath, "./" + newPath];
+    })
+  );
+
+  await fs.promises.mkdir(outputDir, { recursive: true }).catch(console.error);
+  fs.writeFileSync(
+    path.join(outputDir, "import-map.json"),
+    JSON.stringify({
+      imports: {
+        ...Object.fromEntries(map.filter((v) => v)),
+      },
+    })
+  );
+  const name = "fetchReplace.js";
+  fs.copyFile(
+    path.join(path.parse(import.meta.url.replace("file:", "")).dir, name),
+    path.join(outputDir, name),
+    (msg) => msg && console.log(msg)
+  );
 });

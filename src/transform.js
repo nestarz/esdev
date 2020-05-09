@@ -1,6 +1,11 @@
 import fs from "fs";
 import path from "path";
 
+export const needTransform = (fileName) => {
+  const fileExtension = path.extname(fileName).substring(1);
+  return ["jsx", "tsx"].includes(fileExtension);
+}
+
 export const jsxTransform = async (jsx, loader) => {
   const esbuild = (await import("esbuild")).default;
   const service = await esbuild.startService();

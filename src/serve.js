@@ -5,10 +5,16 @@ import transform from "./transform.js";
 
 const server = http.createServer(async (request, response) => {
   const filePath = request.url === "/" ? "index.html" : "." + request.url;
-
-  console.log(filePath);
+  
   if (!fs.existsSync(filePath)) {
     response.writeHeader(404);
+    response.end();
+    return;
+  }
+
+  if (filePath === "./build/fetchReplace.js") {
+    response.writeHeader(200, { "Content-Type": "application/javascript" });
+    response.write("");
     response.end();
     return;
   }
