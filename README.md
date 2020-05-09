@@ -1,6 +1,6 @@
 # esdev
 
-Serve and build TypeScript and JSX files, that's all.
+Process to transform files, that's all.
 The rest is up to you.
 
 ## Requirement
@@ -46,4 +46,17 @@ Add this line to your `index.html` file. It will intercept all request to non-na
 5. (Optional) Serve
 ```
 ./node_modules/.bin/esdev-serve
+```
+
+## Config API
+You must create a `esdev.config.js` file at the root of your project (same as `index.html`).
+```js
+module.exports = {
+  outputDir: "./build/",   // Where to store the compiled native files and the interceptor script
+  inputGlob: "./src/**/*", // Where to apply the transformers
+  [EXTENSION_NAME]: (string) => {
+    body: [NEW_STRING],
+    "Content-Type": [NEW_NATIVE_CONTENT_TYPE]
+  },
+};
 ```
