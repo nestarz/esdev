@@ -19,6 +19,7 @@ yarn add esdev -D
 }
 ```
 
+Add this line to your `index.html` file. It will replace all non-native files (jsx, ts and tsx) by compiled js.
 ```html
 <script type="module-shim" src="build/fetchReplace.js"></script>
 ```
