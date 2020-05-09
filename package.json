@@ -1,0 +1,12 @@
+{
+  "name": "esdev",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "license": "MIT",
+  "dependencies": {
+    "esbuild": "^0.2.9",
+    "glob": "^7.1.6",
+    "mime": "^2.4.5"
+  }
+}
