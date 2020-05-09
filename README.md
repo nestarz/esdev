@@ -3,6 +3,10 @@
 Process to transform files and serve them compiled, that's all.
 The rest is up to you.
 
+## Information
+
+This library add a Service Worker at the root of your app. It is used to intercept calls to files that have been transformed and send instead the compiled versions. I'm very interesting to know if there is other way to acheive the redirect without aService Worker put at the root of the app.
+
 ## Use
 
 1. Install
@@ -60,7 +64,3 @@ module.exports = {
   },
 };
 ```
-
-## Future
-
-- Remove Service Worker interceptor and use generated ImportMap feature only (Note: Hoping we can map relative urls to other relative urls...)
