@@ -34,7 +34,6 @@ const server = http.createServer(async (request, response) => {
   }
 
   const { body, "Content-Type": contentType } = await transform(filePath);
-  console.log(contentType);
   response.writeHeader(200, { "Content-Type": contentType });
   response.write(body);
   response.end();
