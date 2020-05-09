@@ -1,4 +1,4 @@
-# esdev
+# esdev, a transformer and interceptor process
 
 Process to transform files and serve them compiled, that's all.
 The rest is up to you.
