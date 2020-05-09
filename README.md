@@ -21,5 +21,5 @@ yarn add esdev -D
 
 Add this line to your `index.html` file. It will intercept all request to non-native files (jsx, ts and tsx) and send the compiled js if it exists in the `build` directory built after `yarn build` use.
 ```html
-<script type="module-shim" src="build/fetchReplace.js"></script>
+<script type="module" src="build/fetchReplace.js"></script>
 ```
