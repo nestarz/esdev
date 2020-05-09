@@ -1,10 +1,7 @@
 # esdev
 
-Process to transform files, that's all.
+Process to transform files and serve them compiled, that's all.
 The rest is up to you.
-
-## Requirement
-- es-module-shims=^0.4.6
 
 ## Use
 
@@ -41,9 +38,9 @@ module.exports = {
 
 4. Intercept non-native files
 
-Add this line to your `index.html` file. It intercept all request to files with transformers available and send the transformed version stored in the `outputDir` directory.
+Add this line to your `index.html` file. It's a Service Worker that intercept all request to files with transformers available and send the transformed version stored in the `outputDir` directory.
 ```html
-<script type="module" src="build/esdev-interceptor.js"></script>
+<script type="module" src="build/_esdev/register.js"></script>
 ```
 
 5. (Optional) Serve
