@@ -13,7 +13,9 @@ The rest is up to you.
 yarn add esdev -D
 ```
 
-2. Create esdev.config.json, here an example
+2. Create `esdev.config.json` at the root of your project (same as `index.html`).
+
+Here an example of `esdev.config.json` that declare transformers for JSX and Typescript files:
 ```js
 const esbuildTransform = async (jsx, loader) => {
   const esbuild = (await import("esbuild")).default;
@@ -32,15 +34,16 @@ module.exports = {
 };
 ```
 
-3. Build
+3. Build. It will transform files using the transformers you declared in your `esdev.config.json` file.
 ```
 ./node_modules/.bin/esdev-build
 ```
 
 4. Intercept non-native files
-Add this line to your `index.html` file. It will intercept all request to non-native files (jsx, ts and tsx) and send the compiled js if it exists in the `build` directory built after `yarn build` use.
+
+Add this line to your `index.html` file. It intercept all request to files with transformers available and send the transformed version stored in the `outputDir` directory.
 ```html
-<script type="module" src="build/fetchReplace.js"></script>
+<script type="module" src="build/esdev-interceptor.js"></script>
 ```
 
 5. (Optional) Serve
