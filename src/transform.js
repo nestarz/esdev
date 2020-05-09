@@ -1,22 +1,22 @@
 import fs from "fs";
 import path from "path";
+import mime from "mime";
+import getEsdevConfig from "./config.js";
 
-export const needTransform = (fileName) => {
+export const needTransform = async (fileName) => {
+  const config = await getEsdevConfig();
   const fileExtension = path.extname(fileName).substring(1);
-  return ["jsx", "tsx"].includes(fileExtension);
-}
-
-export const jsxTransform = async (jsx, loader) => {
-  const esbuild = (await import("esbuild")).default;
-  const service = await esbuild.startService();
-  const { js } = await service.transform(jsx, { loader });
-  service.stop();
-  return js;
+  return Object.keys(config).includes(fileExtension);
 };
+
+const validConfigOutput = ({ body, "Content-Type": contentType }) => ({
+  body,
+  "Content-Type": contentType,
+  extension: mime.getExtension(contentType),
+});
 
 export default async (fileName) => {
   const fileExtension = path.extname(fileName).substring(1);
-  return ["jsx", "tsx"].includes(fileExtension)
-    ? [await jsxTransform(fs.readFileSync(fileName), fileExtension), "js"]
-    : [fs.createReadStream(fileName), fileExtension];
+  const { [fileExtension]: transformer } = await getEsdevConfig();
+  return validConfigOutput(await transformer(fs.readFileSync(fileName)));
 };
