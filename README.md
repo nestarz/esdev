@@ -40,7 +40,7 @@ module.exports = {
 
 Add this line to your `index.html` file. It's a Service Worker that intercept all request to files with transformers available and send the transformed version stored in the `outputDir` directory.
 ```html
-<script type="module" src="build/_esdev/register.js"></script>
+<script type="module" src="esdev.interceptor.register.js"></script>
 ```
 
 5. (Optional) Serve
@@ -60,3 +60,7 @@ module.exports = {
   },
 };
 ```
+
+## Future
+
+- Remove Service Worker interceptor and use generated ImportMap feature only (Note: Hoping we can map relative urls to other relative urls...)

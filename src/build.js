@@ -46,10 +46,10 @@ import getEsdevConfig from "./config.js";
     );
     const thisFileDir = path.parse(import.meta.url.replace("file:", "")).dir;
     const sourceInterceptorDir = path.join(thisFileDir, "interceptor");
-    ["register.js", "sw.js"].forEach((name) => {
+    ["esdev.interceptor.register.js", "esdev.interceptor.sw.js"].forEach((name) => {
       fs.copyFile(
         path.join(sourceInterceptorDir, name),
-        path.join(esdevInterceptorDir, name),
+        path.join(path.resolve(), name),
         (msg) => msg && console.log(msg)
       );
     });
