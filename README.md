@@ -1,4 +1,4 @@
-# esdev, a transformer and interceptor process
+# esdev
 
 Process to transform files and serve them compiled, that's all.
 The rest is up to you.
@@ -8,7 +8,7 @@ The rest is up to you.
 This library add a Service Worker at the root of your app. It is used to intercept calls to files that have been transformed and send instead the transformed version. I'm very interesting to know if there is other way to acheive the intercept without a Service Worker put at the root of the app.
 
 ## Motivation
-There is no simple tooling to transform files and make them work with a native feeling. The interceptor is used to give the feeling any transformation is native. 
+There is no simple tooling to transform files and make them work with a native feeling. The interceptor is used to give the feeling any transformation is native. The library consist of a transformer and interceptor process.
 
 ## Use
 
