@@ -59,11 +59,11 @@ Add this line to your `index.html` file. It's a Service Worker that intercept al
 You must create a `esdev.config.js` file at the root of your project (same as `index.html`).
 ```js
 module.exports = {
-  outputDir: "./build/",   // Where to store the compiled native files and the interceptor script
+  outputDir: "./build/",   // Where to store the compiled native files and the interceptor map
   inputGlob: "./src/**/*", // Where to apply the transformers
   [EXTENSION_NAME]: (string) => {
     body: [NEW_STRING],
-    "Content-Type": [NEW_NATIVE_CONTENT_TYPE]
+    "Content-Type": [NEW_NATIVE_CONTENT_TYPE] // Must be a Content-Type known by the browser
   },
 };
 ```
