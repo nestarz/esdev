@@ -1,12 +1,15 @@
 {
   "name": "esdev",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "index.js",
   "type": "module",
   "license": "MIT",
   "dependencies": {
-    "esbuild": "^0.2.9",
     "glob": "^7.1.6",
     "mime": "^2.4.5"
+  },
+  "bin": {
+    "esdev-serve": "./src/serve.js",
+    "esdev-build": "./src/build.js"
   }
 }
