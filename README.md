@@ -1,6 +1,6 @@
 # esdev
 
-Process to transform files and serve them compiled, that's all.
+Process to transform files and serve them transformed, that's all.
 The rest is up to you.
 
 ## Motivation
