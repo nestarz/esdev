@@ -31,6 +31,8 @@ module.exports = {
   jsx: (jsx) => esbuildTransform(jsx, "jsx"),
   tsx: (tsx) => esbuildTransform(tsx, "tsx"),
   ts: (ts) => esbuildTransform(ts, "ts"),
+  // vue: (vue) => ...,
+  // sass: (sass) => ...,
 };
 ```
 
