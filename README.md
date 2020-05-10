@@ -17,10 +17,10 @@ yarn add esdev -D
 
 Here an example of `esdev.config.json` that declare transformers for JSX and Typescript files:
 ```js
-const esbuildTransform = async (jsx, loader) => {
+const esbuildTransform = async (string, loader) => {
   const esbuild = (await import("esbuild")).default;
   const service = await esbuild.startService();
-  const { js } = await service.transform(jsx, { loader });
+  const { js } = await service.transform(string, { loader });
   service.stop();
   return { body: js, "Content-Type": "application/javascript" };
 };
