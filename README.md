@@ -15,7 +15,7 @@ yarn add esdev -D
 
 2. Create `esdev.config.json` at the root of your project (same as `index.html`).
 
-Here an example of `esdev.config.json` that declare transformers for JSX and Typescript files:
+Here an example of `esdev.config.json` that declare transformers for JSX and Typescript files using `esbuild`:
 ```js
 const esbuildTransform = async (string, loader) => {
   const esbuild = (await import("esbuild")).default;
