@@ -71,7 +71,7 @@ module.exports = {
 ## Import Maps
 
 For now you may need to polyfill the [WICG/import-maps](https://github.com/WICG/import-maps) spec.
-Here a working example:
+You can add the `es-module-shims` polyfill using the [Heritage](https://github.com/nestarz/heritage) package manager, using Snowpack or via the CDN.
 
 ```bash
 heritage add es-module-shims
@@ -89,10 +89,10 @@ That's all.
 
 ## Information
 
-To have the command `heritage` available you need to have `yarn bin`or `npm bin` in your `PATH` like so:
+To have the command `esdev` available you need to have `yarn bin`or `npm bin` in your `PATH` like so:
 
 ```
 export PATH=$(yarn bin):$PATH
 ```
 
-Otherwise you need to use this command `./node_modules/.bin/heritage` from the root of your package.
+Otherwise you need to use this command `./node_modules/.bin/esdev` from the root of your package.
