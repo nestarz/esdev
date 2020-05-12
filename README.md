@@ -1,7 +1,7 @@
 # esdev
 
-Tiny process to transform files (from Typescript to JSX, to Vue-SFC, Yaml, ...) and serve them transformed, that's all.
-The rest is up to you.
+Tiny process to transform files and serve them transformed, that's all.
+The rest is up to you. (Default support to Typescript and JSX files).
 
 ```bash
 yarn add esdev -D
