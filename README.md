@@ -3,15 +3,13 @@
 Process to transform files and serve them transformed, that's all.
 The rest is up to you.
 
-## Use
-
-1. Install
-
 ```bash
 yarn add esdev -D
 ```
 
-3. Build. Transpilation of files with registered `Transformers` in `esdev.config.json`.
+## Use
+
+1. Build. Transpilation of files with registered `Transformers` in `esdev.config.json`.
 
 ```
 esdev build
@@ -21,13 +19,13 @@ or build on changes:
 esdev watch
 ```
 
-4. Add `build-import-map.json` to map original files with transpiled ones.
+2. Add `build-import-map.json` to map original files with transpiled ones.
 
 ```html
 <script type="module" src="build/build-import-map.json"></script>
 ```
 
-5. (Optional) Create a server with automatic transpilation of files and serve them.
+3. (Optional) Create a server with automatic transpilation of files and serve them.
 
 ```
 esdev serve
