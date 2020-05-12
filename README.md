@@ -12,6 +12,7 @@ yarn add esdev -D
 - No need to serve the `build` folder. Everything works from the root of your package.
 - Extendable. Use your own transformers. Your own serve tool, your own minifier... No lock-in at all !
 - Rely on the Modern Web specification, from modules to [WICG/import-maps](https://github.com/WICG/import-maps).
+- No resolver algorithm. It's handled natively by the browser, **without extra-cost**.
 
 Can be seen as an alternative to [vite](https://github.com/vuejs/vite) or [snowpack](https://github.com/pikapkg/snowpack).
 
