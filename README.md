@@ -9,7 +9,7 @@ yarn add esdev -D
 
 ## Use
 
-1. Build. Transpilation of files with registered `Transformers` in `esdev.config.json`.
+1. Build. Transpilation of files usinng registered `transformers` (from `esdev.config.js` or the default ones, see below).
 
 ```
 esdev build
@@ -48,7 +48,7 @@ module.exports = {
 };
 ```
 
-Below the default `esdev.config.json`, it registers transformers for JSX and Typescript files using `esbuild`:
+Below the default `esdev.config.js`, it registers transformers for JSX and Typescript files using `esbuild`:
 
 ```js
 const esbuildTransform = async (string, loader) => {
