@@ -3,9 +3,6 @@
 Process to transform files and serve them transformed, that's all.
 The rest is up to you.
 
-## Motivation
-There is no simple tooling to transform files and make them work with a native feeling. The interceptor is used to give the feeling any transformation is native. The library consist of a transformer and interceptor process.
-
 ## Use
 
 1. Install
@@ -36,21 +33,19 @@ module.exports = {
 };
 ```
 
-3. Build. It will transform files using the transformers you declared in your `esdev.config.json` file.
+3. Build. Transpilation of files with registered `Transformers` in `esdev.config.json`.
 ```
-./node_modules/.bin/esdev-build
+esdev build
 ```
 
-4. Intercept non-native files
-
-Add this line to your `index.html` file. It's a Service Worker that intercept all request to files with transformers available and send the transformed version stored in the `outputDir` directory.
+4. Add `build-import-map.json` to map original files with transpiled ones.
 ```html
-<script type="module" src="esdev.interceptor.register.js"></script>
+<script type="module" src="build/build-import-map.json"></script>
 ```
 
-5. (Optional) Serve
+5. (Optional) Serve with automatic transpilation of files with registered `Transformer`
 ```
-./node_modules/.bin/esdev-serve
+esdev serve
 ```
 
 ## Config API
@@ -66,7 +61,25 @@ module.exports = {
 };
 ```
 
+6. Optional. For now you may need to polyfill the [WICG/import-maps](https://github.com/WICG/import-maps) spec.
+Here a working example:
+```bash
+heritage add es-module-shims
+```
+```html
+<script defer src="web_modules/es-module-shims/0.4.6/es-module-shims.js"></script>
+<script type="importmap-shim" src="build/build-import-map.json"></script>
+<script type="module-shim">
+  import App from "./index.tsx";
+</script>
+```
+
+That's all.
+
 ## Information
 
-This library add a Service Worker at the root of your app. It is used to intercept calls to files that have been transformed and send the transformed version. I'm very interesting to know if there is other way to acheive the intercept without a Service Worker put at the root of the app.
-
+To have the command `heritage` available you need to have `yarn bin`or `npm bin` in your `PATH` like so:
+```
+export PATH=$(yarn bin):$PATH
+```
+Otherwise you need to use this command `./node_modules/.bin/heritage` from the root of your package.

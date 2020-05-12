@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+acorn@^7.2.0:
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/acorn/-/acorn-7.2.0.tgz#17ea7e40d7c8640ff54a694c889c26f31704effe"
+  integrity sha512-apwXVmYVpQ34m/i71vrApRrRKCWQnZZF1+npOD0WV5xZFfwWOmKGQ2RWlfdy9vWITsenisM8M0Qeq8agcFHNiQ==
+
 balanced-match@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.0.tgz#89b4d199ab2bee49de164ea02b89ce462d71b767"
@@ -19,6 +24,11 @@ concat-map@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
   integrity sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=
+
+esbuild@^0.2.11:
+  version "0.2.11"
+  resolved "https://registry.yarnpkg.com/esbuild/-/esbuild-0.2.11.tgz#e6676fe15308e467be10eb4f534b60e1ed74e25a"
+  integrity sha512-T614oyicETVZemGY5Km9y2TPepyVVqg/VEpZRrCoKjw5DTF8IuSyWzIKB/tw0G/brlgQtXBetwAKzBrPORCOtA==
 
 fs.realpath@^1.0.0:
   version "1.0.0"

@@ -3,48 +3,39 @@ import http from "http";
 import path from "path";
 import fs from "fs";
 import mime from "mime";
-import transform, { needTransform } from "./transform.js";
 
-const server = http.createServer(async (request, response) => {
-  const configPath = path.join(path.resolve(), "esdev.config.js");
-  const config = (await import(configPath)).default;
+const createServer = ({ transformers }) =>
+  http.createServer(async (request, response) => {
+    const filePath = request.url === "/" ? "index.html" : "." + request.url;
+    const extension = path.extname(filePath).substring(1);
 
-  const filePath = request.url === "/" ? "index.html" : "." + request.url;
+    if (!fs.existsSync(filePath)) {
+      response.writeHeader(404);
+      response.end();
+      return;
+    }
 
-  if (!fs.existsSync(filePath)) {
-    response.writeHeader(404);
-    response.end();
-    return;
-  }
+    if (extension in transformers) {
+      const { body, "Content-Type": contentType } = await transform(filePath);
+      response.writeHeader(200, { "Content-Type": contentType });
+      response.write(body);
+      response.end();
+      return;
+    }
 
-  if (
-    path.join(filePath) === path.join(config.outputDir, "esdev-interceptor.js")
-  ) {
-    response.writeHeader(200, { "Content-Type": "application/javascript" });
-    response.write("");
-    response.end();
-    return;
-  }
-
-  if (!(await needTransform(filePath))) {
-    const fileExtension = path.extname(filePath).substring(1);
-    response.writeHeader(200, { "Content-Type": mime.getType(fileExtension) });
+    const type = mime.getType(extension);
+    const contentType = extension === "html" ? `${type}; charset=utf-8` : type;
+    response.writeHeader(200, { "Content-Type": contentType });
     fs.createReadStream(filePath).pipe(response);
-    return;
-  }
+  });
 
-  const { body, "Content-Type": contentType } = await transform(filePath);
-  response.writeHeader(200, { "Content-Type": contentType });
-  response.write(body);
-  response.end();
-});
-
-const listen = (port) =>
-  server
+const listen = (config, port) =>
+  createServer(config)
     .listen(port)
     .on("listening", () => console.log(`Running at http://localhost:${port}`));
 
-listen(5000).on("error", () => {
-  console.warn("Already running at port 5000.");
-  listen(5001 + Math.floor(Math.random() * 10000));
-});
+export default (config) =>
+  listen(config, 5000).on("error", () => {
+    console.warn("Already running at port 5000.");
+    listen(config, 5001 + Math.floor(Math.random() * 10000));
+  });

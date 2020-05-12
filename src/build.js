@@ -1,57 +1,74 @@
 #!/usr/bin/env node
-import fs from "fs";
+import { promises as fs } from "fs";
 import path from "path";
-import glob from "glob";
-import transform, { needTransform } from "./transform.js";
-import getEsdevConfig from "./config.js";
+import mime from "mime";
+import globSync from "glob";
 
-(async () => {
-  const { outputDir, inputGlob } = await getEsdevConfig();
+import { updateDependencies } from "./walker.js";
 
-  glob(inputGlob, async (err, res) => {
-    fs.rmdirSync(outputDir, { recursive: true });
-    const map = await Promise.all(
-      res.map(async (filePath) => {
-        if (!(await needTransform(filePath))) {
-          return;
-        }
+const validConfigOutput = ({ body, "Content-Type": contentType }) => ({
+  body,
+  "Content-Type": contentType,
+  extension: mime.getExtension(contentType),
+});
 
-        const { body, extension } = await transform(filePath);
+export const transform = async (transformers, filePath) => {
+  const fileExtension = path.extname(filePath).substring(1);
+  const transformer = transformers[fileExtension];
+  return validConfigOutput(await transformer(await fs.readFile(filePath)));
+};
 
-        const parsed = path.parse(filePath);
-        const newName = [parsed.name, extension].join(".");
-        const newPath = path.join(outputDir, parsed.dir, newName);
+export const transformAvailable = (transformers, filePath) =>
+  path.extname(filePath).substring(1) in transformers;
 
-        await fs.promises
-          .mkdir(path.join(outputDir, parsed.dir), { recursive: true })
-          .catch(console.error);
+export const build = async (filePath, { transformers, outputDir }) => {
+  if (filePath.includes(outputDir)) return;
+  if (filePath.includes("node_modules")) return;
+  if (filePath.includes("web_modules")) return;
+  if (!transformAvailable(transformers, filePath)) return;
 
-        fs.writeFileSync(newPath, body);
+  const { body, extension } = await transform(transformers, filePath);
+  const parsed = path.parse(filePath);
+  const newName = [parsed.name, extension].join(".");
+  const newPath = path.join(outputDir, parsed.dir, newName);
+  const newBody = updateDependencies(
+    body,
+    (dependency) =>
+      `./${path.join(
+        path.relative(outputDir, ".."),
+        path.parse(filePath).dir,
+        dependency
+      )}`
+  );
 
-        return [filePath, "./" + newPath];
-      })
-    );
+  await fs.mkdir(path.join(outputDir, parsed.dir), { recursive: true });
+  await fs.writeFile(newPath, newBody);
 
-    const esdevInterceptorDir = path.join(outputDir, "_esdev");
-    await fs.promises
-      .mkdir(esdevInterceptorDir, { recursive: true })
-      .catch(console.error);
-    fs.writeFileSync(
-      path.join(esdevInterceptorDir, "import-map.json"),
-      JSON.stringify({
-        imports: {
-          ...Object.fromEntries(map.filter((v) => v)),
-        },
-      })
-    );
-    const thisFileDir = path.parse(import.meta.url.replace("file:", "")).dir;
-    const sourceInterceptorDir = path.join(thisFileDir, "interceptor");
-    ["esdev.interceptor.register.js", "esdev.interceptor.sw.js"].forEach((name) => {
-      fs.copyFile(
-        path.join(sourceInterceptorDir, name),
-        path.join(path.resolve(), name),
-        (msg) => msg && console.log(msg)
-      );
-    });
-  });
-})();
+  return [
+    path.relative(outputDir, filePath),
+    path.join(path.relative(outputDir, "."), newPath),
+  ];
+};
+
+const glob = (pattern) =>
+  new Promise((resolve, reject) =>
+    globSync(pattern, (_, results) => resolve(results), reject)
+  );
+
+export default async ({ outputDir, inputGlob, transformers }) => {
+  await fs.rmdir(outputDir, { recursive: true });
+  await fs.mkdir(outputDir);
+
+  const files = await glob(inputGlob);
+  const builder = (dependency) =>
+    build(dependency, { transformers, outputDir });
+  const importMap = (await Promise.all(files.map(builder))).filter((v) => v);
+
+  const importMapPath = path.join(outputDir, "build-import-map.json");
+  await fs.writeFile(
+    importMapPath,
+    JSON.stringify({
+      imports: Object.fromEntries(importMap),
+    })
+  );
+};
