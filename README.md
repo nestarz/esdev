@@ -7,7 +7,9 @@ The rest is up to you. (Default support to Typescript and JSX files).
 yarn add esdev -D
 ```
 
-Small footprint. Esdev relies only on `acorn` and `mime` packages. `esbuild` is used as the default transformer.
+- Small footprint. Esdev relies only on `acorn` and `mime` packages. `esbuild` is used as the default transformer.
+- No need to serve the `build` folder. Everything works from the root of your package.
+- Extendable. Use your own transformers. Your own serve tool, your own minifier... No lock-in at all !
 
 ## Use
 
