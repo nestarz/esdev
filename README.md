@@ -9,7 +9,7 @@ yarn add esdev -D
 
 ## Use
 
-1. Build. Transpilation of files usinng registered `transformers` (from `esdev.config.js` or the default ones, see below).
+1. Build. Transpilation of files (using registered transformers from `esdev.config.js` or the default ones, see below).
 
 ```
 esdev build
