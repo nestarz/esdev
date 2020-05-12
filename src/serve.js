@@ -15,8 +15,17 @@ const createServer = ({ transformers }) =>
       return;
     }
 
+    if(filePath.includes("build-import-map.json")) {
+      response.writeHeader(200, { "Content-Type": mime.getType(extension) });
+      response.write("{}");
+      response.end();
+      return;
+    }
+
     if (extension in transformers) {
-      const { body, "Content-Type": contentType } = await transform(filePath);
+      const transform = transformers[extension];
+      const source = fs.readFileSync(filePath);
+      const { body, "Content-Type": contentType } = await transform(source);
       response.writeHeader(200, { "Content-Type": contentType });
       response.write(body);
       response.end();

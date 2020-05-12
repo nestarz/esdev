@@ -1,8 +1,7 @@
 #!/usr/bin/env node
-import { promises as fs } from "fs";
+import { promises as fs, readdirSync, statSync } from "fs";
 import path from "path";
 import mime from "mime";
-import globSync from "glob";
 
 import { updateDependencies } from "./walker.js";
 
@@ -46,20 +45,28 @@ export const build = async (filePath, { transformers, outputDir }) => {
 
   return [
     path.relative(outputDir, filePath),
-    path.join(path.relative(outputDir, "."), newPath),
+    path.join(
+      path.relative(outputDir, "."),
+      path.relative(path.resolve(), newPath)
+    ),
   ];
 };
 
-const glob = (pattern) =>
-  new Promise((resolve, reject) =>
-    globSync(pattern, (_, results) => resolve(results), reject)
-  );
+const getAllFiles = (dir) =>
+  readdirSync(dir)
+    .reduce((files, file) => {
+      if (file.startsWith(".") || file.includes("/.")) return files;
+      const name = path.join(dir, file);
+      const isDirectory = statSync(name).isDirectory();
+      return isDirectory ? [...files, ...getAllFiles(name)] : [...files, name];
+    }, [])
+    .map((file) => path.relative(path.resolve(), file));
 
-export default async ({ outputDir, inputGlob, transformers }) => {
+export default async ({ outputDir, inputDir, transformers }) => {
   await fs.rmdir(outputDir, { recursive: true });
   await fs.mkdir(outputDir);
 
-  const files = await glob(inputGlob);
+  const files = getAllFiles(inputDir);
   const builder = (dependency) =>
     build(dependency, { transformers, outputDir });
   const importMap = (await Promise.all(files.map(builder))).filter((v) => v);

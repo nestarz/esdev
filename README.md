@@ -11,36 +11,14 @@ The rest is up to you.
 yarn add esdev -D
 ```
 
-2. Create `esdev.config.json` at the root of your project (same as `index.html`).
-
-Here an example of `esdev.config.json` that declare transformers for JSX and Typescript files using `esbuild`:
-
-```js
-const esbuildTransform = async (string, loader) => {
-  const esbuild = (await import("esbuild")).default;
-  const service = await esbuild.startService();
-  const { js } = await service.transform(string, { loader });
-  service.stop();
-  return { body: js, "Content-Type": "application/javascript" };
-};
-
-module.exports = {
-  outputDir: "./build/",
-  inputGlob: "./src/**/*",
-  jsx: (jsx) => esbuildTransform(jsx, "jsx"),
-  tsx: (tsx) => esbuildTransform(tsx, "tsx"),
-  ts: (ts) => esbuildTransform(ts, "ts"),
-  // vue: (vue) => ...,
-  // sass: (sass) => ...,
-};
-```
-
-If no `esdev.config.json` is provided, the above configuration is used.
-
 3. Build. Transpilation of files with registered `Transformers` in `esdev.config.json`.
 
 ```
 esdev build
+```
+or build on changes:
+```
+esdev watch
 ```
 
 4. Add `build-import-map.json` to map original files with transpiled ones.
@@ -57,7 +35,7 @@ esdev serve
 
 ## Config API
 
-You must create a `esdev.config.js` file at the root of your project (same directory as `index.html`).
+A `esdev.config.js` file at the root of your project (same directory as `index.html`) is used to configure the transformers and other esdev options.
 
 ```js
 module.exports = {
@@ -72,8 +50,30 @@ module.exports = {
 };
 ```
 
-6. Optional. For now you may need to polyfill the [WICG/import-maps](https://github.com/WICG/import-maps) spec.
-   Here a working example:
+Below the default `esdev.config.json`, it registers transformers for JSX and Typescript files using `esbuild`:
+
+```js
+const esbuildTransform = async (string, loader) => {
+  const esbuild = (await import("esbuild")).default;
+  const service = await esbuild.startService();
+  const { js } = await service.transform(string, { loader });
+  service.stop();
+  return { body: js, "Content-Type": "application/javascript" };
+};
+
+module.exports = {
+  outputDir: "./build/",
+  inputGlob: "./src/**/*",
+  jsx: (jsx) => esbuildTransform(jsx, "jsx"),
+  tsx: (tsx) => esbuildTransform(tsx, "tsx"),
+  ts: (ts) => esbuildTransform(ts, "ts"),
+};
+```
+
+## Import Maps
+
+For now you may need to polyfill the [WICG/import-maps](https://github.com/WICG/import-maps) spec.
+Here a working example:
 
 ```bash
 heritage add es-module-shims
