@@ -1,15 +1,17 @@
 # esdev
 
 Tiny process to transform files and serve them transformed, that's all.
-The rest is up to you. (Default support to Typescript and JSX files).
+The rest is up to you. 
 
 ```bash
 yarn add esdev -D
 ```
 
+- Default support to Typescript and JSX files. Ready to use out-of-the-box.
 - Small footprint. Esdev relies only on `acorn` and `mime` packages. `esbuild` is used as the default transformer.
 - No need to serve the `build` folder. Everything works from the root of your package.
 - Extendable. Use your own transformers. Your own serve tool, your own minifier... No lock-in at all !
+- Rely on the Modern Web specification, from modules to [WICG/import-maps](https://github.com/WICG/import-maps).
 
 ## Use
 
