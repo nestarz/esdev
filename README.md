@@ -37,8 +37,8 @@ A `esdev.config.js` file at the root of your project (same directory as `index.h
 
 ```js
 module.exports = {
-  outputDir: "./build/",   // Where to store the compiled native files and the interceptor map
-  inputGlob: "./src/**/*", // Where to apply the transformers
+  outputDir: "./build/",   // Where to store the compiled native files and the build import-map
+  inputDir: "./src/", // Where to apply the transformers
   transformers: {
     [EXTENSION_NAME]: (string) => {
       body: [NEW_STRING],
