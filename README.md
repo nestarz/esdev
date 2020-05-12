@@ -1,7 +1,9 @@
 # esdev
 
-Process to transform files and serve them transformed, that's all.
+Tiny process to transform files and serve them transformed, that's all.
 The rest is up to you.
+
+Rely only on `acorn` and `mime` packages. `esbuild` is used as the default transformer.
 
 ```bash
 yarn add esdev -D
