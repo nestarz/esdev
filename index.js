@@ -25,7 +25,7 @@ new Promise((r) => fs.access(esdevConfigPath, fs.F_OK, (e) => r(!e)))
         ...defaultVueTransformer,
         ...inputTransformers,
       };
-      console.log(transformers);
+      console.log(`Available transformers: ${Object.keys(transformers)}`);
       const [command] = process.argv.slice(2);
       const actions = {
         watch: () =>

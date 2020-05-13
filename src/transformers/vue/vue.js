@@ -6,7 +6,6 @@ const vueCompile = (string) => {
   const style = /<style[^>]*>((.|\n)*?)<\/style>/gi.exec(string);
 
   const html = style ? style[0] + template[0] : template[0];
-  console.log(parse(html));
   const { code: render } = compileTemplate({
     source: parse(html).descriptor.template.content,
   });
