@@ -11,9 +11,9 @@ import defaultTsxTransformer from "./src/transformers/ts-jsx-tsx/ts-jsx-tsx.js";
 
 const esdevConfigPath = path.join(path.resolve(), "esdev.config.js");
 
-new Promise((r) => fs.access(esdevConfigPath, fs.F_OK, (e) => r(!e)))
-  .catch(() => {})
-  .then(async () => (await import(esdevConfigPath)).default)
+fs.access(esdevConfigPath)
+.catch(() => ({}))
+.then(async (module) => module ?? (await import(esdevConfigPath)).default)
   .then(
     async ({
       outputDir = path.join(path.resolve(), "./build/"),
