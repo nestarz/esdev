@@ -19,7 +19,7 @@ export default async () =>
     root: ".",
     fallback: "index.html",
     reload: true,
-    inject: "",
+    inject: `<meta charset="utf-8">`,
     port: (await isPortTaken(5000)) ? 5000 : undefined,
   }).then((instance) => {
     console.log(instance);
