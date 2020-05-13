@@ -1,33 +1,19 @@
 #!/usr/bin/env node
 import path from "path";
+import { promises as fs } from "fs";
 
 import serve from "./src/serve.js";
 import build from "./src/build.js";
 import watch from "./src/watch.js";
 
-const esbuildTransform = async (string, loader) => {
-  const esbuild = (await import("esbuild")).default;
-  const service = await esbuild.startService();
-  const { js } = await service.transform(string, { loader });
-  service.stop();
-  return { body: js, "Content-Type": "application/javascript" };
-};
+import defaultVueTransformer from "./src/transformers/vue/vue.js";
+import defaultTsxTransformer from "./src/transformers/ts-jsx-tsx/ts-jsx-tsx.js";
 
-const vueCompile = (string) => {
-  const script = /<script.*>((.|\n)*?)<\/script>/g.exec(string);
-  const template = /<template.*>((.|\n)*?)<\/template>/gi.exec(string);
-  const style = /<style[^>]*>((.|\n)*?)<\/style>/gi.exec(string);
-  return script[1].replace(
-    "export default {",
-    `export default { template: \`${
-      style ? style[0] + template[1] : template[1]
-    }\`,`
-  );
-};
+const esdevConfigPath = path.join(path.resolve(), "esdev.config.js");
 
-import(path.join(path.resolve(), "esdev.config.js"))
-  .then((module) => module.default)
+new Promise((r) => fs.access(esdevConfigPath, fs.F_OK, (e) => r(!e)))
   .catch(() => {})
+  .then(async () => (await import(esdevConfigPath)).default)
   .then(
     async ({
       outputDir = path.join(path.resolve(), "./build/"),
@@ -35,16 +21,11 @@ import(path.join(path.resolve(), "esdev.config.js"))
       transformers: inputTransformers = {},
     } = {}) => {
       const transformers = {
-        jsx: (jsx) => esbuildTransform(jsx, "jsx"),
-        tsx: (tsx) => esbuildTransform(tsx, "tsx"),
-        ts: (ts) => esbuildTransform(ts, "ts"),
-        vue: (source) => ({
-          body: vueCompile(source),
-          "Content-Type": "application/javascript",
-          postTransform: ["ts"],
-        }),
+        ...defaultTsxTransformer,
+        ...defaultVueTransformer,
         ...inputTransformers,
       };
+      console.log(transformers);
       const [command] = process.argv.slice(2);
       const actions = {
         watch: () =>
@@ -76,4 +57,5 @@ import(path.join(path.resolve(), "esdev.config.js"))
           `${command} ¬¬ Supported Commands: ${Object.keys(actions)}`
         );
     }
-  );
+  )
+  .catch((err) => console.error(err));
