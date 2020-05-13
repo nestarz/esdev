@@ -16,3 +16,8 @@ mime@^2.4.5:
   version "2.4.5"
   resolved "https://registry.yarnpkg.com/mime/-/mime-2.4.5.tgz#d8de2ecb92982dedbb6541c9b6841d7f218ea009"
   integrity sha512-3hQhEUF027BuxZjQA3s7rIv/7VCQPa27hN9u9g87sEkWaKwQPuXOkVKtOeiyUrnWqTDiOs8Ed2rwg733mB0R5w==
+
+servor@^3.3.1:
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/servor/-/servor-3.3.1.tgz#6862a9016837c5bd8c7ab20c05c775d72dfceab2"
+  integrity sha512-3597Ob1ZKGzRYNZSgD/LSpiQcj3JRN6MvIDFUxkcwtWwUvXkrskhPT3Z5FiFFS3RIG0Je94x56Y9AfvY+mcvgA==

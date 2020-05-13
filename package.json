@@ -1,6 +1,6 @@
 {
   "name": "esdev",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "main": "index.js",
   "type": "module",
   "license": "MIT",
@@ -11,5 +11,8 @@
   },
   "bin": {
     "esdev": "./index.js"
+  },
+  "devDependencies": {
+    "servor": "^3.3.1"
   }
 }

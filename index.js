@@ -12,8 +12,8 @@ import defaultTsxTransformer from "./src/transformers/ts-jsx-tsx/ts-jsx-tsx.js";
 const esdevConfigPath = path.join(path.resolve(), "esdev.config.js");
 
 fs.access(esdevConfigPath)
-.catch(() => ({}))
-.then(async (module) => module ?? (await import(esdevConfigPath)).default)
+  .catch(() => ({}))
+  .then(async (module) => module ?? (await import(esdevConfigPath)).default)
   .then(
     async ({
       outputDir = path.join(path.resolve(), "./build/"),
@@ -33,7 +33,7 @@ fs.access(esdevConfigPath)
             const fileExtension = path.extname(file).substring(1);
             if (fileExtension in transformers) {
               build({ outputDir, inputDir, transformers }).then(() =>
-                console.log("Build Succeed. Ok.")
+                console.log("Build Succeed.")
               );
             }
           }),
@@ -47,7 +47,17 @@ fs.access(esdevConfigPath)
                 )}"></script>`
             )
           ),
-        serve: () => serve({ transformers }),
+        serve: () => {
+          serve({ transformers });
+          watch({ inputDir, outputDir }, (event, file) => {
+            const fileExtension = path.extname(file).substring(1);
+            if (fileExtension in transformers) {
+              build({ outputDir, inputDir, transformers }).then(() =>
+                console.log("Build Succeed.")
+              );
+            }
+          });
+        },
       };
 
       if (command in actions) {

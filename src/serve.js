@@ -1,50 +1,26 @@
-#!/usr/bin/env node
-import http from "http";
-import path from "path";
-import fs from "fs";
-import mime from "mime";
+import servor from "servor";
+import net from "net";
 
-const createServer = ({ transformers }) =>
-  http.createServer(async (request, response) => {
-    const filePath = request.url === "/" ? "index.html" : "." + request.url;
-    const extension = path.extname(filePath).substring(1);
-
-    if (!fs.existsSync(filePath)) {
-      response.writeHeader(404);
-      response.end();
-      return;
-    }
-
-    if(filePath.includes("build-import-map.json")) {
-      response.writeHeader(200, { "Content-Type": mime.getType(extension) });
-      response.write("{}");
-      response.end();
-      return;
-    }
-
-    if (extension in transformers) {
-      const transform = transformers[extension];
-      const source = fs.readFileSync(filePath);
-      const { body, "Content-Type": contentType } = await transform(source);
-      response.writeHeader(200, { "Content-Type": contentType });
-      response.write(body);
-      response.end();
-      return;
-    }
-
-    const type = mime.getType(extension);
-    const contentType = extension === "html" ? `${type}; charset=utf-8` : type;
-    response.writeHeader(200, { "Content-Type": contentType });
-    fs.createReadStream(filePath).pipe(response);
+const isPortTaken = (port) =>
+  new Promise((resolve, reject) => {
+    const tester = net
+      .createServer()
+      .once("error", (err) =>
+        err.code == "EADDRINUSE" ? resolve(false) : reject(err)
+      )
+      .once("listening", () =>
+        tester.once("close", () => resolve(true)).close()
+      )
+      .listen(port);
   });
 
-const listen = (config, port) =>
-  createServer(config)
-    .listen(port)
-    .on("listening", () => console.log(`Running at http://localhost:${port}`));
-
-export default (config) =>
-  listen(config, 5000).on("error", () => {
-    console.warn("Already running at port 5000.");
-    listen(config, 5001 + Math.floor(Math.random() * 10000));
+export default async () =>
+  servor({
+    root: ".",
+    fallback: "index.html",
+    reload: true,
+    inject: "",
+    port: (await isPortTaken(5000)) ? 5000 : undefined,
+  }).then((instance) => {
+    console.log(instance);
   });
