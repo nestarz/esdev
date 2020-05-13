@@ -13,12 +13,25 @@ yarn add esdev -D
 - Extendable. Use your own transformers. Your own serve tool, your own minifier... No lock-in at all !
 - Rely on the Modern Web specification, from modules to [WICG/import-maps](https://github.com/WICG/import-maps).
 - No resolver algorithm. It's handled natively by the browser, **without extra-cost**.
+- Hot reloading using [servor](https://github.com/lukejacksonn/servor).
 
 Can be seen as an alternative to [vite](https://github.com/vuejs/vite) or [snowpack](https://github.com/pikapkg/snowpack).
 
 ## Use
 
-1. Build. Transpilation of files (using registered transformers from `esdev.config.js` or the default ones, see below).
+1. Add `build-import-map.json` to map original files with transpiled ones.
+
+```html
+<script type="module" src="build/build-import-map.json"></script>
+```
+
+2. Serve your files using [servor](https://github.com/lukejacksonn/servor). It watch your files, transpile and reload your browser on changes.
+
+```
+esdev serve
+```
+
+3. Build.
 
 ```
 esdev build
@@ -28,17 +41,6 @@ or build on changes:
 esdev watch
 ```
 
-2. Add `build-import-map.json` to map original files with transpiled ones.
-
-```html
-<script type="module" src="build/build-import-map.json"></script>
-```
-
-3. (Optional) Create a server with automatic transpilation of files and serve them.
-
-```
-esdev serve
-```
 
 ## Config API
 
