@@ -36,7 +36,8 @@ esdev serve
 ```
 esdev build
 ```
-or build on changes:
+
+4. Optional. Build on changes, this is useful if you want to use your own choice of tool to serve your files.
 ```
 esdev watch
 ```
