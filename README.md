@@ -69,18 +69,6 @@ const esbuildTransform = async (string, loader) => {
   return { body: js, "Content-Type": "application/javascript" };
 };
 
-const vueCompile = (string) => {
-  const script = /<script.*>((.|\n)*?)<\/script>/g.exec(string);
-  const template = /<template.*>((.|\n)*?)<\/template>/gi.exec(string);
-  const style = /<style[^>]*>((.|\n)*?)<\/style>/gi.exec(string);
-  return script[1].replace(
-    "export default {",
-    `export default { template: \`${
-      style ? style[0] + template[1] : template[1]
-    }\`,`
-  );
-};
-
 module.exports = {
   outputDir: "./build/",
   inputGlob: "./src/**/*",
@@ -88,7 +76,7 @@ module.exports = {
   tsx: (source) => esbuildTransform(source, "tsx"),
   ts: (source) => esbuildTransform(source, "ts"),
   vue: (source) => ({
-    body: vueCompile(source), //
+    body: vueCompile(source),
     "Content-Type": "application/javascript",
     postTransform: ["ts"],
   }),
