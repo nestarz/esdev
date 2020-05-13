@@ -13,6 +13,18 @@ const esbuildTransform = async (string, loader) => {
   return { body: js, "Content-Type": "application/javascript" };
 };
 
+const vueCompile = (string) => {
+  const script = /<script.*>((.|\n)*?)<\/script>/g.exec(string);
+  const template = /<template.*>((.|\n)*?)<\/template>/gi.exec(string);
+  const style = /<style[^>]*>((.|\n)*?)<\/style>/gi.exec(string);
+  return script[1].replace(
+    "export default {",
+    `export default { template: \`${
+      style ? style[0] + template[1] : template[1]
+    }\`,`
+  );
+};
+
 import(path.join(path.resolve(), "esdev.config.js"))
   .then((module) => module.default)
   .catch(() => {})
@@ -20,12 +32,19 @@ import(path.join(path.resolve(), "esdev.config.js"))
     async ({
       outputDir = path.join(path.resolve(), "./build/"),
       inputDir = path.join(path.resolve(), "./"),
-      transformers = {
+      transformers: inputTransformers = {},
+    } = {}) => {
+      const transformers = {
         jsx: (jsx) => esbuildTransform(jsx, "jsx"),
         tsx: (tsx) => esbuildTransform(tsx, "tsx"),
         ts: (ts) => esbuildTransform(ts, "ts"),
-      },
-    } = {}) => {
+        vue: (source) => ({
+          body: vueCompile(source),
+          "Content-Type": "application/javascript",
+          postTransform: ["ts"],
+        }),
+        ...inputTransformers,
+      };
       const [command] = process.argv.slice(2);
       const actions = {
         watch: () =>

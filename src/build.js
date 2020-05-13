@@ -5,8 +5,13 @@ import mime from "mime";
 
 import { updateDependencies } from "./walker.js";
 
-const validConfigOutput = ({ body, "Content-Type": contentType }) => ({
+const validConfigOutput = ({
   body,
+  "Content-Type": contentType,
+  postTransform = [],
+}) => ({
+  body,
+  postTransform,
   "Content-Type": contentType,
   extension: mime.getExtension(contentType),
 });
@@ -14,7 +19,9 @@ const validConfigOutput = ({ body, "Content-Type": contentType }) => ({
 export const transform = async (transformers, filePath) => {
   const fileExtension = path.extname(filePath).substring(1);
   const transformer = transformers[fileExtension];
-  return validConfigOutput(await transformer(await fs.readFile(filePath)));
+  return validConfigOutput(
+    await transformer(await fs.readFile(filePath, "utf-8"))
+  );
 };
 
 export const transformAvailable = (transformers, filePath) =>
@@ -26,12 +33,26 @@ export const build = async (filePath, { transformers, outputDir }) => {
   if (filePath.includes("web_modules")) return;
   if (!transformAvailable(transformers, filePath)) return;
 
-  const { body, extension } = await transform(transformers, filePath);
+  const { body, extension, postTransform } = await transform(
+    transformers,
+    filePath
+  );
+  const { body: transformedBody = body } = await postTransform.reduce(
+    async (body, extension) => {
+      if (extension in transformers) {
+        return validConfigOutput(await transformers[extension](await body));
+      }
+      console.warn(`PostTransform '${extension}' does not exists.`);
+      return { body: await body };
+    },
+    Promise.resolve(body)
+  );
+
   const parsed = path.parse(filePath);
   const newName = [parsed.name, extension].join(".");
   const newPath = path.join(outputDir, parsed.dir, newName);
   const newBody = updateDependencies(
-    body,
+    transformedBody,
     (dependency) =>
       `./${path.join(
         path.relative(outputDir, ".."),

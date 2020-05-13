@@ -7,7 +7,7 @@ The rest is up to you.
 yarn add esdev -D
 ```
 
-- Default support to Typescript and JSX files. Ready to use out-of-the-box.
+- Default support to Typescript, JSX and Vue files. Ready to use out-of-the-box.
 - Small footprint. Esdev only relies on **two** packages, `acorn` and `mime`, with `esbuild` as the default transformer.
 - No need to serve the `build` folder. Everything works from the root of your package and can be **served static**.
 - Extendable. Use your own transformers. Your own serve tool, your own minifier... No lock-in at all !
@@ -51,13 +51,14 @@ module.exports = {
   transformers: {
     [EXTENSION_NAME]: (string) => {
       body: [NEW_STRING],
-      "Content-Type": [NEW_NATIVE_CONTENT_TYPE] // Must be a Content-Type known by the browser
+      "Content-Type": [NEW_NATIVE_CONTENT_TYPE], // Must be a Content-Type known by the browser
+      postTransform: [EXTENSION_NAME_1, EXTENSION_NAME_2] // Post apply registered transformers
     },
   }
 };
 ```
 
-Below the default `esdev.config.js`, it registers transformers for JSX and Typescript files using `esbuild`:
+Below the default `esdev.config.js`, it registers transformers for Vue-SFC, JSX and Typescript files using `esbuild` and a custom Vue Compiler:
 
 ```js
 const esbuildTransform = async (string, loader) => {
@@ -68,12 +69,29 @@ const esbuildTransform = async (string, loader) => {
   return { body: js, "Content-Type": "application/javascript" };
 };
 
+const vueCompile = (string) => {
+  const script = /<script.*>((.|\n)*?)<\/script>/g.exec(string);
+  const template = /<template.*>((.|\n)*?)<\/template>/gi.exec(string);
+  const style = /<style[^>]*>((.|\n)*?)<\/style>/gi.exec(string);
+  return script[1].replace(
+    "export default {",
+    `export default { template: \`${
+      style ? style[0] + template[1] : template[1]
+    }\`,`
+  );
+};
+
 module.exports = {
   outputDir: "./build/",
   inputGlob: "./src/**/*",
-  jsx: (jsx) => esbuildTransform(jsx, "jsx"),
-  tsx: (tsx) => esbuildTransform(tsx, "tsx"),
-  ts: (ts) => esbuildTransform(ts, "ts"),
+  jsx: (source) => esbuildTransform(source, "jsx"),
+  tsx: (source) => esbuildTransform(source, "tsx"),
+  ts: (source) => esbuildTransform(source, "ts"),
+  vue: (source) => ({
+    body: vueCompile(source), //
+    "Content-Type": "application/javascript",
+    postTransform: ["ts"],
+  }),
 };
 ```
 
@@ -105,3 +123,5 @@ export PATH=$(yarn bin):$PATH
 ```
 
 Otherwise you need to use this command `./node_modules/.bin/esdev` from the root of your package.
+
+## Limitation
