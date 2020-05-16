@@ -87,7 +87,7 @@ module.exports = {
 ```
 
 But you can also decide to transform txt files like so:
-```
+```js
 module.exports = {
   transformers: {
     txt: (source) => ({
