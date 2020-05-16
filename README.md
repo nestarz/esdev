@@ -86,6 +86,20 @@ module.exports = {
 };
 ```
 
+But you can also decide to transform txt files like so:
+```
+module.exports = {
+  transformers: {
+    txt: (source) => ({
+      body: `export default \`${source.replace(/`/g, '\\`')}\``,
+      "Content-Type": "application/javascript",
+    })
+  }
+}
+```
+
+It's up to you !
+
 ## Import Maps
 
 For now you may need to polyfill the [WICG/import-maps](https://github.com/WICG/import-maps) spec.
