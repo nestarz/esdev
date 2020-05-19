@@ -45,7 +45,7 @@ esdev watch
 
 ## Config API
 
-A `esdev.config.js` file at the root of your project (same directory as `index.html`) is used to configure the transformers and other esdev options.
+An optional `esdev.config.js` file at the root of your project (same directory as `index.html`) can be used to configure the transformers and other esdev options.
 
 ```js
 module.exports = {
