@@ -22,7 +22,7 @@ Can be seen as an alternative to [vite](https://github.com/vuejs/vite) or [snowp
 1. Add `build-import-map.json` to map original files with transpiled ones.
 
 ```html
-<script type="module" src="build/build-import-map.json"></script>
+<script type="importmap" src="build/build-import-map.json"></script>
 ```
 
 2. Serve your files using [servor](https://github.com/lukejacksonn/servor). It watch your files, transpile and reload your browser on changes.
