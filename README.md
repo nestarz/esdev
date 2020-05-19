@@ -8,7 +8,7 @@ yarn add esdev -D
 ```
 
 - Default support to Typescript, JSX and Vue files. Ready to use out-of-the-box.
-- Small footprint. Only relies on **three** zero-dependencies packages, `acorn` and `mime`, and `esbuild`.
+- Small footprint. Only relies on **three** zero-dependencies packages, `acorn`, `mime`, and `esbuild`.
 - No need to serve the `build` folder. Everything works from the root of your package and can be **served static**.
 - Extendable. Use your own transformers. Your own serve tool, your own minifier... No lock-in at all !
 - Rely on the Modern Web specification, from modules to [WICG/import-maps](https://github.com/WICG/import-maps).
