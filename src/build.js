@@ -51,15 +51,11 @@ export const build = async (filePath, { transformers, outputDir }) => {
   const parsed = path.parse(filePath);
   const newName = [parsed.name, extension].join(".");
   const newPath = path.join(outputDir, parsed.dir, newName);
-  const newBody = updateDependencies(
-    transformedBody,
-    (dependency) =>
-      `./${path.join(
-        path.relative(outputDir, ".."),
-        path.parse(filePath).dir,
-        dependency
-      )}`
-  );
+  const newBody = updateDependencies(transformedBody, (dependency) => {
+    const a = path.join(path.resolve(), path.parse(filePath).dir, dependency);
+    const b = path.join(outputDir, path.parse(filePath).dir, dependency);
+    return `./${path.relative(b, a)}`;
+  });
 
   await fs.mkdir(path.join(outputDir, parsed.dir), { recursive: true });
   await fs.writeFile(newPath, newBody);
@@ -91,12 +87,7 @@ export default async ({ outputDir, inputDir, transformers }) => {
   const builder = (dependency) =>
     build(dependency, { transformers, outputDir });
   const importMap = (await Promise.all(files.map(builder))).filter((v) => v);
-
+  const imports = Object.fromEntries(importMap);
   const importMapPath = path.join(outputDir, "build-import-map.json");
-  await fs.writeFile(
-    importMapPath,
-    JSON.stringify({
-      imports: Object.fromEntries(importMap),
-    })
-  );
+  await fs.writeFile(importMapPath, JSON.stringify({ imports }, null, 2));
 };
