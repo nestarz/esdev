@@ -8,7 +8,7 @@ yarn add esdev -D
 ```
 
 - Default support to Typescript, JSX and Vue files. Ready to use out-of-the-box.
-- Small footprint. Esdev only relies on **two** packages, `acorn` and `mime`, with `esbuild` as the default transformer.
+- Small footprint. Only relies on **three** zero-dependencies packages, `acorn`, `mime`, and `esbuild`.
 - No need to serve the `build` folder. Everything works from the root of your package and can be **served static**.
 - Extendable. Use your own transformers. Your own serve tool, your own minifier... No lock-in at all !
 - Rely on the Modern Web specification, from modules to [WICG/import-maps](https://github.com/WICG/import-maps).
@@ -19,10 +19,10 @@ Can be seen as an alternative to [vite](https://github.com/vuejs/vite) or [snowp
 
 ## Use
 
-1. Add `build-import-map.json` to map original files with transpiled ones.
+1. Add importmap `build-import-map.json` to map original files with transpiled ones.
 
 ```html
-<script type="module" src="build/build-import-map.json"></script>
+<script type="importmap" src="build/build-import-map.json"></script>
 ```
 
 2. Serve your files using [servor](https://github.com/lukejacksonn/servor). It watch your files, transpile and reload your browser on changes.
@@ -45,7 +45,7 @@ esdev watch
 
 ## Config API
 
-A `esdev.config.js` file at the root of your project (same directory as `index.html`) is used to configure the transformers and other esdev options.
+An optional `esdev.config.js` file at the root of your project (same directory as `index.html`) can be used to configure the transformers and other esdev options.
 
 ```js
 module.exports = {
